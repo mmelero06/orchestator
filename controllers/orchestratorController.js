@@ -9,24 +9,12 @@ function health(req, res) {
   });
 }
 
-async function process(req, res) {
+async function run(req, res) {
   try {
-    const { data, features, meta } = req.body;
-
-    // Validar datos
-    if (!data || !features || !meta) {
-      return res.status(400).json({
-        error: 'Missing required fields: data, features, meta'
-      });
-    }
-
-    // 1. Llamar a ACQUIRE para guardar los datos
+    // 1. Llamar a ACQUIRE para obtener los datos mockeados
     let acquireResult;
     try {
-      const acquireResponse = await axios.post(`${ACQUIRE_URL}/acquire`, {
-        data,
-        source: meta.source || 'orchestrator'
-      });
+      const acquireResponse = await axios.post(`${ACQUIRE_URL}/data`, {});
       acquireResult = acquireResponse.data;
     } catch (err) {
       console.error('Error llamando a acquire:', err.message);
@@ -40,8 +28,7 @@ async function process(req, res) {
     let predictResult;
     try {
       const predictResponse = await axios.post(`${PREDICT_URL}/predict`, {
-        features,
-        meta
+        features: acquireResult.features,
       });
       predictResult = predictResponse.data;
     } catch (err) {
@@ -53,11 +40,12 @@ async function process(req, res) {
       });
     }
 
-    // 3. Devolver respuesta combinada
-    res.status(201).json({
-      success: true,
-      acquireResult,
-      predictResult
+    // 3. Devolver respuesta según contrato
+    res.status(200).json({
+      dataId: acquireResult.dataId,
+      predictionId: predictResult.predictionId,
+      prediction: predictResult.prediction,
+      timestamp: predictResult.timestamp || new Date().toISOString()
     });
 
   } catch (err) {
@@ -71,5 +59,5 @@ async function process(req, res) {
 
 module.exports = {
   health,
-  process
+  run
 };

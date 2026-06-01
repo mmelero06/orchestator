@@ -2,7 +2,7 @@
 require('dotenv').config();
 
 module.exports = {
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT || 8080,
   ACQUIRE_URL: process.env.ACQUIRE_URL || 'http://localhost:3001',
   PREDICT_URL: process.env.PREDICT_URL || 'http://localhost:3002'
 };

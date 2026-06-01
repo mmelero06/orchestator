@@ -5,7 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT_ORCHESTRATOR || 8080;
 const ACQUIRE_URL = process.env.ACQUIRE_URL || 'http://localhost:3001';
 const PREDICT_URL = process.env.PREDICT_URL || 'http://localhost:3002';
 

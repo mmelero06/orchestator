@@ -1,9 +1,9 @@
 // routes/orchestratorRoutes.js
 const express = require('express');
 const router = express.Router();
-const { health, process } = require('../controllers/orchestratorController');
+const { health, run } = require('../controllers/orchestratorController');
 
 router.get('/health', health);
-router.post('/process', process);
+router.post('/run', run);
 
 module.exports = router;
