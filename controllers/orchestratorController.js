@@ -29,6 +29,7 @@ async function run(req, res) {
     try {
       const predictResponse = await axios.post(`${PREDICT_URL}/predict`, {
         features: acquireResult.features,
+        meta: { featureCount: 7 } 
       });
       predictResult = predictResponse.data;
     } catch (err) {
