@@ -4,22 +4,20 @@
 require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
-const jwt = require('jsonwebtoken'); // <-- Añadimos la librería de seguridad
+const jwt = require('jsonwebtoken'); // Libreria para la autenticacion
 
-const PORT = process.env.PORT_ORCHESTRATOR || 8080;
+const PORT = process.env.PORT || process.env.PORT_ORCHESTRATOR || 8080;
 const ACQUIRE_URL = process.env.ACQUIRE_URL || 'http://localhost:3001';
 const PREDICT_URL = process.env.PREDICT_URL || 'http://localhost:3002';
-const SECRET_KEY = 'mi_clave_secreta_super_segura'; // <-- Clave para firmar el pase VIP
+const SECRET_KEY = 'mi_clave_secreta_super_segura'; // <-- Clave 
 
 const app = express();
 app.use(express.json());
 
-// ---------------------------------------------------------
-// 1. EL LOGIN: Donde conseguimos la llave (Token)
-// ---------------------------------------------------------
-// ---------------------------------------------------------
-// 1. EL LOGIN: Conectado a ACQUIRE y MongoDB de verdad
-// ---------------------------------------------------------
+
+// EL LOGIN: Conseguir la clava
+
+
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   
@@ -45,9 +43,9 @@ app.post('/login', async (req, res) => {
     return res.status(500).json({ error: 'Error al conectar con el servicio de autenticación' });
   }
 });
-// ---------------------------------------------------------
-// 2. EL PORTERO: Middleware que revisa si traes la llave
-// ---------------------------------------------------------
+
+// VERIFICAR EL TOKEN: Middleware que revisa si traes la llave
+
 const verificarToken = (req, res, next) => {
   const bearerHeader = req.headers['authorization'];
   
@@ -75,10 +73,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'orchestrator' });
 });
 
-// ---------------------------------------------------------
-// 3. LA RUTA PRINCIPAL (Ahora protegida por 'verificarToken')
-// ---------------------------------------------------------
-// OJO: Tu ruta se llama /process, no /run
+
+// LA RUTA PRINCIPAL (Ahora protegida por 'verificarToken')
+
 app.post('/process', verificarToken, async (req, res) => {
   try {
     const { data, features, meta } = req.body;
@@ -116,6 +113,8 @@ app.post('/process', verificarToken, async (req, res) => {
     res.status(500).json({ error: 'Internal orchestrator error' });
   }
 });
+
+//REGISTRAR USUARIO: En la base de datos
 
 app.listen(PORT, () => {
   console.log(`[ORCHESTRATOR] Servicio escuchando en http://localhost:${PORT}`);
